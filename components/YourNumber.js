@@ -16,17 +16,17 @@ export default function YourNumber(props) {
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
-        marginVertical:11
+        marginVertical:11,
     
-
     },
     number: {
         fontSize: 40,
         color: colors.primary,
         marginVertical: 10,
         textAlign:'center',
-     
-
+        borderBottomColor: 'grey',
+        borderBottomWidth:1,
+        width: 71,
     },
    
 })

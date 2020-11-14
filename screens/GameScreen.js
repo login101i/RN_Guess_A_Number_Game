@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react'
-import { StyleSheet, Text, View, Button, Alert } from 'react-native'
+import React, { useState, useRef, useEffect } from 'react'
+import { StyleSheet, Text, View, Button, Alert, TouchableHighlight, TouchableWithoutFeedback, Keyboard } from 'react-native'
 
 import Card from '../components/Card'
 import YourNumber from '../components/YourNumber'
@@ -9,7 +9,6 @@ const generateRandomBetween = (min, max, exclude) => {
     max = Math.floor(max)
 
     const rndNum = Math.floor(Math.random() * (max - min)) + min
-    console.log(rndNum)
     if (rndNum === exclude) {
         return generateRandomBetween(min, max, exclude)
     } else {
@@ -20,16 +19,30 @@ const generateRandomBetween = (min, max, exclude) => {
 export default function GameScreen(props) {
 
     const [currentGuess, setCurrentGuess] = useState(generateRandomBetween(1, 100, props.userChoice))
+    const [guesses, setGuesses] = useState(0)
+
+    const { gameOver, userChoice } = props
+
+    console.log("Guesses from Game:  " + guesses + " lIbza komputera to " + currentGuess + "userChoice to :  " + userChoice)
 
     // super - useRef przeżywa po zrenderowaniu funkcji :). Możemy go wykorzystać.
 
     const currentLow = useRef(1)
     const currentHigh = useRef(100)
 
+
+    
+
+    useEffect(() => {
+        if (currentGuess == userChoice) {
+            gameOver(guesses)
+        }
+    }, [currentGuess, userChoice, gameOver])
+
     // Ta funckja musi być w środku
     const nextGuessHandler = direction => {
-        if ((direction === 'lower' && currentGuess < props.userChoice)||
-            (direction === 'greater' && currentGuess > props.userChoice)){
+        if ((direction === 'lower' && currentGuess < props.userChoice) ||
+            (direction === 'greater' && currentGuess > props.userChoice)) {
             Alert.alert('Nie kłam Maciuś', 'Wiesz, że nie ładnie kłamać',
                 [
                     { text: "Przepraszam", style: 'cancel' }
@@ -41,8 +54,9 @@ export default function GameScreen(props) {
         } else {
             currentLow.current = currentGuess
         }
-        const nextNumber = generateRandomBetween(currentLow.current,currentHigh.current, currentGuess)
+        const nextNumber = generateRandomBetween(currentLow.current, currentHigh.current, currentGuess)
         setCurrentGuess(nextNumber)
+        setGuesses(currentGuessestegoNieZmieniasz => currentGuessestegoNieZmieniasz + 1)
     }
 
 
@@ -51,48 +65,83 @@ export default function GameScreen(props) {
             <Text style={styles.titleNumber}>Liczba wybrana przez komputer:</Text>
             <YourNumber>{currentGuess}</YourNumber>
             <Card style={styles.card}>
-                <Button
-                    title="mniej"
-                    onPress={nextGuessHandler.bind(this, 'lower')}
-                />
-                <Button
-                    title="więcej"
-                    onPress={nextGuessHandler.bind(this, 'greater') }
+                <View style={styles.button}>
+                    <Button
+                        title="mniej"
+                        onPress={nextGuessHandler.bind(this, 'lower')}
+                    />
+                </View>
+                <View style={styles.button}>
+                    <Button
+                        title="więcej"
+                        onPress={nextGuessHandler.bind(this, 'greater')}
 
 
-                />
+                    />
+                </View>
             </Card>
-          
-                <View style={styles.restOfScreen}><Text>tekst</Text></View>
-        
+            <View style={styles.restOfScreen}>
+                <Card style={styles.cardCancel}
+                    onPress={() => props.cancelGame(false)}
+                >
 
-        </View>
+                    <Text>Nowa Gra</Text>
+
+                </Card>
+            </View>
+
+
+        </View >
     )
 }
 
 const styles = StyleSheet.create({
+    button: {
+        height: 50,
+        width: 99,
+        justifyContent: 'center',
+
+
+    },
     card: {
 
-        width: 300,
+        width: 280,
         maxWidth: "80%",
         flexDirection: 'row',
         justifyContent: 'space-around',
-        alignItems: 'center'
+        alignItems: 'center',
+        height: 100,
+
+    },
+    cardCancel: {
+
+        width: 180,
+        maxWidth: "80%",
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        height: 60,
+        marginTop: -250
+
     },
     restOfScreen: {
-        backgroundColor: 'purple',
-        height: 200,
-
+        flex: 1,
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
 
     },
     screen: {
         justifyContent: 'center',
         alignItems: 'center',
         // backgroundColor: 'red',
-        width: '100%'
+
 
     },
     titleNumber: {
         fontSize: 26,
+    },
+    tekst: {
+        fontSize: 22,
     }
 })

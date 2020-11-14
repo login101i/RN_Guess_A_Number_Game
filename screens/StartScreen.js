@@ -26,7 +26,10 @@ export default function StartScreen(props) {
     }
     const handleConfirmHandler = () => {
         const chosenNumber = enteredValue
-        if (chosenNumber === NaN || chosenNumber <= 0 || chosenNumber > 99) {
+        if (chosenNumber === NaN || 
+            chosenNumber <= 0 || 
+            chosenNumber >99  ||
+            chosenNumber===undefined) {
             Alert.alert('Niedobra liczba', 'Liczba musi byćw zakresie od 0 do 99', [{ text: 'oki', style: 'desctructive', onPress: handleClearInput }])
             return
         }
@@ -46,10 +49,13 @@ export default function StartScreen(props) {
 
                 <YourNumber
                 >{selectedNumber}</YourNumber>
-                <Button
-                    title="Graj"
-                    onPress={() => props.startGame(selectedNumber)}
-                />
+                <View style={styles.button}>
+                    <Button
+                        title="Graj"
+                        onPress={() => props.startGame(selectedNumber)}
+                    />
+                </View>
+               
             </Card>
         )
     }
@@ -110,7 +116,11 @@ export default function StartScreen(props) {
 
 const styles = StyleSheet.create({
     button: {
-        width: 100,
+        height: 50,
+        width: 120,
+        justifyContent: 'center',
+
+
     },
 
     buttonContainer: {
@@ -146,6 +156,7 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         width: '80%',
+      
     }
 
 })
