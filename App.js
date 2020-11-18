@@ -46,6 +46,7 @@ export default function App() {
     content = <GameOverScreen
     numberOfGuesess={guessNr}
       cancelGame={startGame}
+    
     />
 
   }
