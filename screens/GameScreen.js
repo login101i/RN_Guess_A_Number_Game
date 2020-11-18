@@ -1,8 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { StyleSheet, Text, View, Button, Alert, TouchableHighlight, TouchableWithoutFeedback, Keyboard } from 'react-native'
+import { StyleSheet, Text, View, Button, Alert, TouchableHighlight, TouchableWithoutFeedback, Keyboard, ScrollView, FlatList } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
+
 
 import Card from '../components/Card'
 import YourNumber from '../components/YourNumber'
+import TitleText from '../components/TitleText'
+import MainButton from '../components/MainButton'
+import defaultStyles from '../config/defaultStyles'
+import BodyText from '../components/BodyText'
 
 const generateRandomBetween = (min, max, exclude) => {
     min = Math.ceil(min)
@@ -18,20 +24,20 @@ const generateRandomBetween = (min, max, exclude) => {
 
 export default function GameScreen(props) {
 
-    const [currentGuess, setCurrentGuess] = useState(generateRandomBetween(1, 100, props.userChoice))
+    const [currentGuess, setCurrentGuess] = useState(generateRandomBetween(1, 999, props.userChoice))
     const [guesses, setGuesses] = useState(0)
+    const [nextGuess, setNextGuess] = useState([currentGuess.toString()])
 
     const { gameOver, userChoice } = props
 
     console.log("Guesses from Game:  " + guesses + " lIbza komputera to " + currentGuess + "userChoice to :  " + userChoice)
 
+
     // super - useRef przeżywa po zrenderowaniu funkcji :). Możemy go wykorzystać.
 
     const currentLow = useRef(1)
-    const currentHigh = useRef(100)
+    const currentHigh = useRef(999)
 
-
-    
 
     useEffect(() => {
         if (currentGuess == userChoice) {
@@ -52,43 +58,52 @@ export default function GameScreen(props) {
         if (direction === 'lower') {
             currentHigh.current = currentGuess
         } else {
-            currentLow.current = currentGuess
+            currentLow.current = currentGuess + 1
         }
         const nextNumber = generateRandomBetween(currentLow.current, currentHigh.current, currentGuess)
         setCurrentGuess(nextNumber)
         setGuesses(currentGuessestegoNieZmieniasz => currentGuessestegoNieZmieniasz + 1)
+        setNextGuess(currGuess => [...currGuess, nextNumber.toString()])
     }
+
+    const ListOfGuesses = (guesses, itemData) => (
+
+        <View
+            style={styles.list}>
+            <BodyText># {guesses +1 - itemData.index}</BodyText>
+            <BodyText>{itemData.item}</BodyText>
+        </View>
+    )
+
 
 
     return (
         <View style={styles.screen}>
-            <Text style={styles.titleNumber}>Liczba wybrana przez komputer:</Text>
+            <Text style={[defaultStyles.bodyText, { marginTop: 22 }]}>Liczba wybrana przez komputer to:</Text>
             <YourNumber>{currentGuess}</YourNumber>
             <Card style={styles.card}>
-                <View style={styles.button}>
-                    <Button
-                        title="mniej"
-                        onPress={nextGuessHandler.bind(this, 'lower')}
-                    />
-                </View>
-                <View style={styles.button}>
-                    <Button
-                        title="więcej"
-                        onPress={nextGuessHandler.bind(this, 'greater')}
+                <MainButton
+                    onPress={nextGuessHandler.bind(this, 'lower')}>
+                    <Ionicons name="md-remove" size={29} color="white" />
+                </MainButton>
+                <MainButton
+                    onPress={nextGuessHandler.bind(this, 'greater')}>
+                    <Ionicons name="md-add" size={29} color="white" />
+                </MainButton>
 
-
-                    />
-                </View>
             </Card>
-            <View style={styles.restOfScreen}>
-                <Card style={styles.cardCancel}
-                    onPress={() => props.cancelGame(false)}
-                >
-
-                    <Text>Nowa Gra</Text>
-
-                </Card>
+            <View style={styles.listContainer}>
+                {/* <ScrollView >
+                    {nextGuess.map((value, index) => ListOfGuesses(value, index + 1))}
+                </ScrollView> */}
+                <FlatList
+                    data={nextGuess}
+                    keyExtractor={(item)=>item}
+                    renderItem={ListOfGuesses.bind(this, guesses)}
+                />
             </View>
+          
+
 
 
         </View >
@@ -124,17 +139,30 @@ const styles = StyleSheet.create({
         marginTop: -250
 
     },
-    restOfScreen: {
-        flex: 1,
-        width: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
 
-    },
     screen: {
         justifyContent: 'center',
         alignItems: 'center',
+        height:"80%",
         // backgroundColor: 'red',
+
+
+    },
+    list: {
+        borderBottomWidth: 2,
+        borderColor: 'grey',
+        marginVertical: 5,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        paddingHorizontal:4
+    },
+    listContainer: {
+        flex: 1,
+        width: 160,
+        marginTop: 33,
+        padding:10,
+        
 
 
     },

@@ -1,11 +1,17 @@
 import React, { useState } from 'react'
 import { StyleSheet, Text, View, TextInput, Button, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native'
 import { Colors } from 'react-native/Libraries/NewAppScreen'
+import { Ionicons } from '@expo/vector-icons'
+
 
 import Card from '../components/Card'
 import colors from '../config/colors'
 import Input from '../components/Input'
 import YourNumber from '../components/YourNumber'
+import BodyText from '../components/BodyText'
+import TitleText from '../components/TitleText'
+import DefaultStyles from '../config/defaultStyles'
+import defaultStyles from '../config/defaultStyles'
 
 export default function StartScreen(props) {
 
@@ -28,9 +34,9 @@ export default function StartScreen(props) {
         const chosenNumber = enteredValue
         if (chosenNumber === NaN || 
             chosenNumber <= 0 || 
-            chosenNumber >99  ||
+            chosenNumber >999  ||
             chosenNumber===undefined) {
-            Alert.alert('Niedobra liczba', 'Liczba musi byćw zakresie od 0 do 99', [{ text: 'oki', style: 'desctructive', onPress: handleClearInput }])
+            Alert.alert('Niedobra liczba', 'Liczba musi byćw zakresie od 0 do 999', [{ text: 'oki', style: 'desctructive', onPress: handleClearInput }])
             return
         }
         console.log(chosenNumber)
@@ -45,7 +51,7 @@ export default function StartScreen(props) {
     if (confirmed) {
         confirmedValue = (
             <Card style={styles.numberCard}>
-                <Text style={styles.titleNumber}>Twój numer to:</Text>
+                <BodyText>Twój numer to:</BodyText>
 
                 <YourNumber
                 >{selectedNumber}</YourNumber>
@@ -70,7 +76,7 @@ export default function StartScreen(props) {
                     Keyboard.dismiss()
                 }}>
                 <View style={styles.container}>
-                    <Text style={styles.title}>Nowa gra</Text>
+                    <TitleText style={defaultStyles.bodyTitleText}>Nowa gra</TitleText>
 
                     <Card style={styles.inputContainer}>
                         <Input
@@ -144,10 +150,13 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 26,
         marginBottom: 12,
+        fontFamily:'open-sans-bold'
 
     },
     titleNumber: {
         fontSize: 26,
+        fontFamily: 'open-sans-bold'
+
 
     },
     input: {
@@ -156,6 +165,7 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         width: '80%',
+        marginTop:22,
       
     }
 
